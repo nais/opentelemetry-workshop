@@ -13,6 +13,9 @@ networks:
     name: opentelemetry-demo
     driver: bridge
 
+volumes:
+  grafana-data:
+
 services:
   # ******************
   # Core Demo Services
@@ -679,6 +682,7 @@ services:
   otel-lgtm:
     image: grafana/otel-lgtm:latest
     container_name: otel-lgtm
+    restart: unless-stopped
     ports:
       - "${GRAFANA_SERVICE_PORT}"
     environment:
@@ -690,7 +694,9 @@ services:
       - ./src/otel-lgtm/config/tempo-config.yaml:/otel-lgtm/tempo-config.yaml
       - ./src/otel-lgtm/config/grafana-dashboards.yaml:/otel-lgtm/grafana/conf/provisioning/dashboards/grafana-dashboards.yaml
       - ./src/otel-lgtm/dashboards:/otel-lgtm/dashboards
+      - grafana-data:/otel-lgtm/grafana/data
     logging: *logging
+
   postgres:
     image: postgres:latest
     container_name: postgres_db
