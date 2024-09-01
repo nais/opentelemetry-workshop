@@ -96,3 +96,30 @@ In the `Options` tab for one of the queries, enable the `Exemplars` option.
 ![Dashboard panel queries](./assets/05-dashboard-queries.png)
 
 Click ont eh `Apply` button to save the changes to the panel and you should see the first panel in your dashboard. Click on the floppy disk icon in the top navigation bar to save the dashboard.
+
+Create two more panels to visualize the request rate and the error rate for different spans for the selected service using the `traces_spanmetrics_calls_total` and `traces_spanmetrics_latency_count` respectively.
+
+!!! note
+
+    :question: What PromQL queries are we using to visualize the request rate and error rate?
+
+    <details>
+    <summary>Hint</summary>
+
+    The PromQL queries are displayed below the query builder filters. They should look like this:
+
+    ```promql
+    sum by (span_name) (rate(traces_spanmetrics_latency_count{service="${service}"}[$__rate_interval]))
+    ```
+
+    ```promql
+    sum by (span_name) (rate(traces_spanmetrics_calls_total{status_code="STATUS_CODE_ERROR", service="${service}"}[$__rate_interval]))
+    ```
+    </details>
+
+    :question: What spans are currently generating errors?
+
+    <details>
+    <summary>Hint</summary>
+
+    You can see the spans that are generating errors by selecting the `adservice`.
