@@ -24,7 +24,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 7,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -484,7 +483,7 @@
       },
       "id": 17,
       "options": {
-        "dedupStrategy": "none",
+        "dedupStrategy": "signature",
         "enableLogDetails": true,
         "prettifyLogMessage": false,
         "showCommonLabels": false,
@@ -512,7 +511,7 @@
             "uid": "Loki"
           },
           "editorMode": "builder",
-          "expr": "{service_name=\"$service\"} |= ``",
+          "expr": "{service_name=\"$service\"} |= `` | logfmt | label_format level=detected_level",
           "format": "logs",
           "hide": false,
           "metrics": [
@@ -971,8 +970,8 @@
         "allValue": "",
         "current": {
           "selected": true,
-          "text": "flagd",
-          "value": "flagd"
+          "text": "accountingservice",
+          "value": "accountingservice"
         },
         "datasource": {
           "type": "prometheus",
@@ -1005,6 +1004,6 @@
   "timezone": "",
   "title": "Demo Dashboard",
   "uid": "otel-demo-dashboard",
-  "version": 5,
+  "version": 1,
   "weekStart": ""
 }

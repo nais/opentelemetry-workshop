@@ -123,3 +123,78 @@ Create two more panels to visualize the request rate and the error rate for diff
     <summary>Hint</summary>
 
     You can see the spans that are generating errors by selecting the `adservice`.
+    </details>
+
+    :question: How can you show only the span name in the legend?
+
+    <details>
+    <summary>Hint</summary>
+
+    You can show only the span name in the legend by setting the `Legend` field to `{{span_name}}`.
+    </details>
+
+Lastly, add a row to the dashboard by clicking the `Add to` button in the top navigation and the `Row` option. Our panels will be added to this row and we can give it a title by clicking on the gear icon by hovering over the row name and giving it a new title, such as `Span Metrics`.
+
+![Dashboard row](./assets/05-dashboard-row.png)
+
+## Adding logs to the dashboard
+
+Start by adding a new row to the dashboard and give it a title, such as `Application Logs`. Next, click the `Add to` button and select `Visualization` to add a new panel.
+
+Here are some hints to help you create the log panel:
+
+* Select the `Logs` visualization type.
+* Select the `Loki` data source.
+* Label filters should be set to: `service_name` `=` `${service}`
+* Add logfmt parser
+* Add label level format
+
+Click on the `Run query` button to see the results of the query.
+
+!!! note
+
+    :question: What is the resulting LogQL query?
+
+    <details>
+    <summary>Hint</summary>
+
+    The LogQL query is displayed below the query builder filters. It should look like this:
+
+    ```promql
+    {service_name="$service"} |= `` | logfmt | label_format level=detected_level
+    ```
+    </details>
+
+As a bonus look at the different Logs visualization options and try to customize the panel to your liking. Click on the `Apply` button to save the changes to the panel and you should see the logs panel in your dashboard.
+
+![Dashboard logs panel](./assets/05-dashboard-logs.png)
+
+Let's also hadd a pie chart to visualize the different log levels for the selected service. Add a new panel to the `Logs` by clicking on the `Add to` button and selecting `Visualization`.
+
+Here are some hints to help you create the pie chart panel:
+
+* Select the `Pie Chart` visualization type.
+* Select the `Loki` data source.
+* Label filters should be set to: `service_name` `=` `${service}`
+* Add logfmt parser
+* Add label level format
+* Add a rate range function to the query
+* Add a sum aggregation to the query on the `level` label
+
+Click on the `Run query` button to see the results of the query.
+
+!!! note
+
+    :question: What is the resulting LogQL query?
+
+    <details>
+    <summary>Hint</summary>
+
+    The LogQL query is displayed below the query builder filters. It should look like this:
+
+    ```promql
+    sum by(level) (rate({service_name="$service"} |= `` | logfmt | label_format level=detected_level [$__auto]))
+    ```
+    </details>
+
+    :question: Select different services, what is the distribution of log levels for service?
