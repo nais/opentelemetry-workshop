@@ -241,3 +241,5 @@ The `Logs` explorer has three sections labeled `A`, `B`, and `C`.
 - Section `A` is the log search query editor. You can write a query to filter the logs based on the log labels and other attributes.
 - Section `B` is the log volume graph. It shows the log volume over time.
 - Section `C` is the log stream. It shows all the logs that match the query in a table format. Click on a log to see the details of the log.
+
+## Exploring Metrics

@@ -271,3 +271,6 @@ We also have some technology, framework and runtime specific metrics available f
 - `process_runtime_go_`
 
 Explore the different metrics available for the different services and add some panels to the dashboard to visualize them using the Prometheus data source.
+
+## Resource specific metrics
+
