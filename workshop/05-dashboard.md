@@ -274,3 +274,17 @@ Explore the different metrics available for the different services and add some 
 
 ## Resource specific metrics
 
+Since we are not running our applications on something like Kubernetes, we don't have access to the node and pod specific metrics. However, we can still visualize some resource specific metrics for the different services.
+
+Some of our services expose resource specific metrics like:
+
+- `process_runtime_cpython_cpu_time_seconds_total`
+- `process_runtime_cpython_memory_bytes`
+
+Add some panels to the dashboard to visualize the resource specific metrics for the different services that provide them, as they might give you some insights into the resource utilization of the services :wink:
+
+## Conclusion
+
+In this section, we have created a dashboard to visualize the data collected for our OpenTelemetry instrumented application. We have added panels to visualize span latency, request rate, error rate, logs, application specific metrics, language specific metrics, and resource specific metrics.
+
+Continue to [Exercise 6: Debugging a memmory leak](./06-challenge-1.md) to put your skills to the test and diagnose a memory leak in a distributed system.

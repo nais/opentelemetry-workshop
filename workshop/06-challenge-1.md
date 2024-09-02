@@ -24,34 +24,52 @@ Save the file and let the application run for a couple of minutes to allow for d
 
 ## Diagnosis
 
-The first step in diagnosing a problem is to determine that a problem exists. Often the first stop will be a metrics dashboard provided by a tool such as Grafana.
+The first step in diagnosing a problem is to determine that a problem exists. Often the first stop will be a the metrics dashboard that we created in the previous exercises. I told you some of those metrics would come in handy one day, didn't I?!
 
-A demo dashboard folder should exist after launching the demo with two dashboards; One is to monitor your OpenTelemetry Collector, and the other contains several queries and charts to analyze latency and request rate from each service.
-Grafana dashboard
+Open the Grafana dashboard and look for any anomalies in the metrics. You should see that the recommendation service is experiencing high CPU and memory usage.
 
-This dashboard will contain a number of charts, but a few should appear interesting:
+![Grafana dashboard](https://opentelemetry.io/docs/demo/scenarios/recommendation-cache/grafana-dashboard.png)
 
-    Recommendation Service (CPU% and Memory)
-    Service Latency (from SpanMetrics)
-    Error Rate
-
-Recommendation Service charts are generated from OpenTelemetry Metrics exported to Prometheus, while the Service Latency and Error Rate charts are generated through the OpenTelemetry Collector Span Metrics processor.
+Recommendation Service charts are generated from OpenTelemetry Metrics exported to Prometheus, while the Service Latency and Error Rate charts are generated through the Span Metrics processor.
 
 From our dashboard, we can see that there seems to be anomalous behavior in the recommendation service – spiky CPU utilization, as well as long tail latency in our p95, 99, and 99.9 histograms. We can also see that there are intermittent spikes in the memory utilization of this service.
 
 We know that we’re emitting trace data from our application as well, so let’s think about another way that we’d be able to determine that a problem exists.
-Jaeger
 
-Jaeger allows us to search for traces and display the end-to-end latency of an entire request with visibility into each individual part of the overall request. Perhaps we noticed an increase in tail latency on our frontend requests. Jaeger allows us to then search and filter our traces to include only those that include requests to the recommendation service.
+## Grafana Tempo
 
-By sorting by latency, we’re able to quickly find specific traces that took a long time. Clicking on a trace in the right panel, we’re able to view the waterfall view.
-Jaeger waterfall
+Grafana Tempo allows us to search for traces and display the end-to-end latency of an entire request with visibility into each individual part of the overall request. Perhaps we noticed an increase in tail latency on our frontend requests. Tempo allows us to then search and filter our traces to include only those that include requests to the recommendation service.
+
+
+By sorting by latency, we’re able to quickly find specific traces that took a long time. Clicking on a trace we’re able to view the waterfall view.
 
 We can see that the recommendation service is taking a long time to complete its work, and viewing the details allows us to get a better idea of what’s going on.
-Confirming the Diagnosis
 
-We can see in our waterfall view that the app.cache_hit attribute is set to false, and that the app.products.count value is extremely high.
+## Confirming the Diagnosis
 
-Returning to the search UI, filter to recommendationservice in the Service dropdown, and search for app.cache_hit=true in the Tags box. Notice that requests tend to be faster when the cache is hit. Now search for app.cache_hit=false and compare the latency. You should notice some changes in the visualization at the top of the trace list.
+Inspect the trace details for a trace that took a long time to complete.
+
+!!! note
+
+    :question: Can you spot any anomalies in the trace details such as span attributes or tags that might indicate the root cause of the memory leak?
+
+    <details>
+    <summary>Hint</summary>
+
+    We can see in our trace details view that the `app.cache_hit` attribute is set to `false`, and that the `app.products.count` value is extremely high.
+    </details>
+
+    :question: Can you find previous traces that exhibit the same or different behavior?
+
+    <details>
+    <summary>Hint</summary>
+
+    Try filter for `recommendationservice` in the service name, and search for `app.cache_hit=true` in tag search. Notice that requests tend to be faster when the cache is hit. Now search for `app.cache_hit=false` and compare the latency. You should notice some changes in the visualization at the top of the trace list.
+
+## Conclusion
 
 Now, since this is a contrived scenario, we know where to find the underlying bug in our code. However, in a real-world scenario, we may need to perform further searching to find out what’s going on in our code, or the interactions between services that cause it.
+
+In this scenario, we were able to use OpenTelemetry to diagnose a memory leak in our recommendation service. We were able to use metrics to identify that there was a problem, and traces to confirm our suspicions and find the root cause of the issue.
+
+Continue to [Exercise 7: More challenges](./07-challenge-2.md) to put your skills to the test and diagnose even more things that can go wrong in a distributed system.

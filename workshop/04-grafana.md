@@ -243,3 +243,11 @@ The `Logs` explorer has three sections labeled `A`, `B`, and `C`.
 - Section `C` is the log stream. It shows all the logs that match the query in a table format. Click on a log to see the details of the log.
 
 ## Exploring Metrics
+
+(Coming soon)
+
+## Conclusion
+
+In this section, we explored the OpenTelemetry data (logs, metrics, and traces) in Grafana. We used the Grafana explorer to visualize the data and understand the performance of the application.
+
+Continue to [Exercise 5: Building your first dashboard](./05-dashboard.md) to learn how to build a custom dashboard in Grafana.
