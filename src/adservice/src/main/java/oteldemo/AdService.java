@@ -59,19 +59,6 @@ public final class AdService {
   private HealthStatusManager healthMgr;
 
   private static final AdService service = new AdService();
-  private static final Tracer tracer = GlobalOpenTelemetry.getTracer("adservice");
-  private static final Meter meter = GlobalOpenTelemetry.getMeter("adservice");
-
-  private static final LongCounter adRequestsCounter =
-      meter
-          .counterBuilder("app.ads.ad_requests")
-          .setDescription("Counts ad requests by request and response type")
-          .build();
-
-  private static final AttributeKey<String> adRequestTypeKey =
-      AttributeKey.stringKey("app.ads.ad_request_type");
-  private static final AttributeKey<String> adResponseTypeKey =
-      AttributeKey.stringKey("app.ads.ad_response_type");
 
   private void start() throws IOException {
     int port =
@@ -149,30 +136,16 @@ public final class AdService {
     @Override
     public void getAds(AdRequest req, StreamObserver<AdResponse> responseObserver) {
       AdService service = AdService.getInstance();
-
       // get the current span in context
-      Span span = Span.current();
       try {
         List<Ad> allAds = new ArrayList<>();
         AdRequestType adRequestType;
         AdResponseType adResponseType;
-
-        Baggage baggage = Baggage.fromContextOrNull(Context.current());
         MutableContext evaluationContext = new MutableContext();
-        if (baggage != null) {
-          final String sessionId = baggage.getEntryValue("session.id");
-          span.setAttribute("session.id", sessionId);
-          evaluationContext.setTargetingKey(sessionId);
-          evaluationContext.add("session", sessionId);
-        } else {
-          logger.info("no baggage found in context");
-        }
 
         CPULoad cpuload = CPULoad.getInstance();
         cpuload.execute(ffClient.getBooleanValue(ADSERVICE_HIGH_CPU_FEATURE_FLAG, false, evaluationContext));
 
-        span.setAttribute("app.ads.contextKeys", req.getContextKeysList().toString());
-        span.setAttribute("app.ads.contextKeys.count", req.getContextKeysCount());
         if (req.getContextKeysCount() > 0) {
           logger.info("Targeted ad request received for " + req.getContextKeysList());
           for (int i = 0; i < req.getContextKeysCount(); i++) {
@@ -192,14 +165,7 @@ public final class AdService {
           allAds = service.getRandomAds();
           adResponseType = AdResponseType.RANDOM;
         }
-        span.setAttribute("app.ads.count", allAds.size());
-        span.setAttribute("app.ads.ad_request_type", adRequestType.name());
-        span.setAttribute("app.ads.ad_response_type", adResponseType.name());
 
-        adRequestsCounter.add(
-            1,
-            Attributes.of(
-                adRequestTypeKey, adRequestType.name(), adResponseTypeKey, adResponseType.name()));
 
         // Throw 1/10 of the time to simulate a failure when the feature flag is enabled
         if (ffClient.getBooleanValue(ADSERVICE_FAILURE, false, evaluationContext) && random.nextInt(10) == 0) {
@@ -216,9 +182,6 @@ public final class AdService {
         responseObserver.onNext(reply);
         responseObserver.onCompleted();
       } catch (StatusRuntimeException e) {
-        span.addEvent(
-            "Error", Attributes.of(AttributeKey.stringKey("exception.message"), e.getMessage()));
-        span.setStatus(StatusCode.ERROR);
         logger.log(Level.WARN, "GetAds Failed with status {}", e.getStatus());
         responseObserver.onError(e);
       }
@@ -226,11 +189,8 @@ public final class AdService {
   }
 
   private static final ImmutableListMultimap<String, Ad> adsMap = createAdsMap();
-
-  @WithSpan("getAdsByCategory")
   private Collection<Ad> getAdsByCategory(@SpanAttribute("app.ads.category") String category) {
     Collection<Ad> ads = adsMap.get(category);
-    Span.current().setAttribute("app.ads.count", ads.size());
     return ads;
   }
 
@@ -240,21 +200,13 @@ public final class AdService {
 
     List<Ad> ads = new ArrayList<>(MAX_ADS_TO_SERVE);
 
-    // create and start a new span manually
-    Span span = tracer.spanBuilder("getRandomAds").startSpan();
 
     // put the span into context, so if any child span is started the parent will be set properly
-    try (Scope ignored = span.makeCurrent()) {
 
       Collection<Ad> allAds = adsMap.values();
       for (int i = 0; i < MAX_ADS_TO_SERVE; i++) {
         ads.add(Iterables.get(allAds, random.nextInt(allAds.size())));
       }
-      span.setAttribute("app.ads.count", ads.size());
-
-    } finally {
-      span.end();
-    }
 
     return ads;
   }
