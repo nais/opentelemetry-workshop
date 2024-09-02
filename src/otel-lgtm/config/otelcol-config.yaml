@@ -1,7 +1,4 @@
 receivers:
-  httpcheck/frontendproxy:
-    targets:
-      - endpoint: http://opentelemetry-demo-frontendproxy:8080
   otlp:
     protocols:
       grpc:
@@ -12,6 +9,73 @@ receivers:
             - http://*
             - https://*
         endpoint: 0.0.0.0:4318
+  httpcheck/frontendproxy:
+    targets:
+      - endpoint: http://opentelemetry-demo-frontendproxy:8080
+  docker_stats:
+    endpoint: unix:///var/run/docker.sock
+  redis:
+    endpoint: "valkey-cart:6379"
+    username: "valkey"
+    collection_interval: 10s
+  # Host metrics
+  hostmetrics:
+    root_path: /hostfs
+    scrapers:
+      cpu:
+        metrics:
+          system.cpu.utilization:
+            enabled: true
+      disk:
+      load:
+      filesystem:
+        exclude_mount_points:
+          mount_points:
+            - /dev/*
+            - /proc/*
+            - /sys/*
+            - /run/k3s/containerd/*
+            - /var/lib/docker/*
+            - /var/lib/kubelet/*
+            - /snap/*
+          match_type: regexp
+        exclude_fs_types:
+          fs_types:
+            - autofs
+            - binfmt_misc
+            - bpf
+            - cgroup2
+            - configfs
+            - debugfs
+            - devpts
+            - devtmpfs
+            - fusectl
+            - hugetlbfs
+            - iso9660
+            - mqueue
+            - nsfs
+            - overlay
+            - proc
+            - procfs
+            - pstore
+            - rpc_pipefs
+            - securityfs
+            - selinuxfs
+            - squashfs
+            - sysfs
+            - tracefs
+          match_type: strict
+      memory:
+        metrics:
+          system.memory.utilization:
+            enabled: true
+      network:
+      paging:
+      processes:
+      process:
+        mute_process_exe_error: true
+        mute_process_io_error: true
+        mute_process_user_error: true
   prometheus/collector:
     config:
       scrape_configs:
@@ -63,7 +127,15 @@ service:
       exporters: [otlphttp/traces]
       #exporters: [otlphttp/traces,logging/traces]
     metrics:
-      receivers: [otlp, prometheus/collector]
+      receivers:
+        [
+          hostmetrics,
+          docker_stats,
+          httpcheck/frontendproxy,
+          otlp,
+          prometheus/collector,
+          redis,
+        ]
       processors: [transform, batch]
       exporters: [otlphttp/metrics]
       #exporters: [otlphttp/metrics,logging/metrics]
