@@ -27,8 +27,22 @@ docker-compose pull
 ```
 
 !!! note
+
     The images are quite large, so it might take a while to download them :coffee:
 
+## Start the application
+
+Start the services required for the workshop:
+
+```bash
+docker-compose up -d flagd
+docker-compose up -d otel-lgtm
+docker-compose up
+```
+
+!!! note
+
+    We are phasing the startup to eliminate failures due to dependencies not being ready. The `flagd` service is a simple service that returns a flag. The `otel-lgtm` service is the Grafana LGTM stack.
 
 ## Next steps
 
