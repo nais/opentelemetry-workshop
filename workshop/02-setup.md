@@ -77,6 +77,23 @@ And then build and start the otel-lgtm service:
 docker-compose up -d --build otel-lgtm
 ```
 
+Verify that the otel-lgtm service is running correctly by executing the following command:
+
+```bash
+docker-compose logs otel-lgtm -f
+```
+
+It should output something like this:
+
+```bash
+otel-lgtm  | Waiting for the OpenTelemetry collector and the Grafana LGTM stack to start up...
+otel-lgtm  | The OpenTelemetry collector and the Grafana LGTM stack are up and running.
+otel-lgtm  | Open ports:
+otel-lgtm  |  - 4317: OpenTelemetry GRPC endpoint
+otel-lgtm  |  - 4318: OpenTelemetry HTTP endpoint
+otel-lgtm  |  - 3000: Grafana. User: admin, password: admin
+```
+
 ## Verify the services
 
 Open your browser and navigate to the following URLs:
