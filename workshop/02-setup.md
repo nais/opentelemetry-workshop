@@ -44,6 +44,45 @@ docker-compose up
 
     We are phasing the startup to eliminate failures due to dependencies not being ready. The `flagd` service is a simple service that returns a flag. The `otel-lgtm` service is the Grafana LGTM stack.
 
+### Problems starting otel-lgtm?
+
+If you get problems related to volumes, you can try do the following to relace the otel-lgtm service with the following service:
+
+```yaml
+  otel-lgtm:
+    build:
+      context: ./src/otel-lgtm
+      dockerfile: Dockerfile
+    container_name: otel-lgtm
+    restart: unless-stopped
+    ports:
+      - "${GRAFANA_SERVICE_PORT}"
+    environment:
+      - GF_SERVER_DOMAIN=localhost
+      - GF_SERVER_ROOT_URL=%(protocol)s://%(domain)s/grafana/
+      - GF_SERVER_SERVE_FROM_SUB_PATH=true
+    logging: *logging
+```
+
+And comment out the grafana volume:
+
+```yaml
+#volumes:
+#  grafana-data:
+```
+
+And then build and start the otel-lgtm service:
+
+```bash
+docker-compose up -d --build otel-lgtm
+```
+
+## Verify the services
+
+Open your browser and navigate to the following URLs:
+
+* http://localhost:8080
+
 ## Next steps
 
 Now that you have the repository cloned and the Docker images pulled, you are ready to start the workshop. In the next section, we will cover the basics of instrumentation with OpenTelemetry.

@@ -676,6 +676,9 @@ services:
   # ********************
   otel-lgtm:
     image: grafana/otel-lgtm:latest
+    #build:
+    #  context: ./src/otel-lgtm
+    #  dockerfile: Dockerfile
     container_name: otel-lgtm
     restart: unless-stopped
     ports:
