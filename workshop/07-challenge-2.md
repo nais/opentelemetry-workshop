@@ -296,7 +296,7 @@ Describe how you would validate that your fix resolves the problem using OpenTel
 
 Remember, in a real-world scenario, problems are often more complex and may require deeper investigation. This exercise demonstrates the power of OpenTelemetry in helping to quickly identify and diagnose issues in distributed systems.
 
-# Exercise 7: More challenges
+# More challenges
 
 Out application provides several feature flags that you can use to simulate different scenarios. These flags are managed by flagd, a simple feature flag service that supports OpenFeature. Flag values are stored in the `src/flagd/demo.flagd.json` file. To enable a flag, change the `defaultVariant` value in the config file for a given flag to `"on"` and by using the dahsboards and telemetry data avaiable observe, debug and disagnose the problems.
 
