@@ -3,20 +3,20 @@
 In this section, we will instrument a simple Java application with OpenTelemetry. We will use the OpenTelemetry Java SDK to add tracing to the application.
 
 
-## Getting started 
+## Getting started
 
 In this assignment we are going to instrument ad service with the OpenTelemetry Java agent. You can read about the documentation [here](https://github.com/open-telemetry/opentelemetry-java-instrumentation/)
 
 ### Assignment 1 - Enable OpenTelemetry Java agent in the Adservice
 First assignment is to enable Opentelemetry java agent for the adservice. You can read about how it's done here  : https://opentelemetry.io/docs/zero-code/java/agent/getting-started/
 
-We should configure the agent as well with the current environment variables. 
+We should configure the agent as well with the current environment variables.
 
 ```bash
 OTEL_EXPORTER_OTLP_ENDPOINT // endpoint for the OTEL collector
-OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE // Configure the exporter’s aggregation temporality option (see above) on the basis of instrument kind. 
+OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE // Configure the exporter’s aggregation temporality option (see above) on the basis of instrument kind.
 OTEL_RESOURCE_ATTRIBUTES // default attribute config is needed
-OTEL_LOGS_EXPORTER // format we are sending logs in 
+OTEL_LOGS_EXPORTER // format we are sending logs in
 OTEL_SERVICE_NAME // name of the service
 JAVA_TOOL_OPTIONS  // url to the java agent that we are injecting
 ```
@@ -29,10 +29,10 @@ We can use the span context to hook into so we can enrich traces with more infor
 
 __Assignment  :__
 
-In get `getAds` method hook into the span context and add the following attributes to the span `app.ads.contextKeys`, `app.ads.contextKeys.count`, `app.ads.count`, `app.ads.ad_request_type`, `app.ads.ad_response_type` .  
+In get `getAds` method hook into the span context and add the following attributes to the span `app.ads.contextKeys`, `app.ads.contextKeys.count`, `app.ads.count`, `app.ads.ad_request_type`, `app.ads.ad_response_type` .
 Data that you are adding to the attributes are defined in the demo.proto file. This will give us insight into what advertisement that has been shown.
 
-You can rebuild the adservice with the following command : 
+You can rebuild the adservice with the following command :
 
 ```bash
 docker-compose down adservice
@@ -82,15 +82,15 @@ In the Adservice we would like to add a span for just `getRandomAds()` method an
 
 ### Assignment.4 - Add Metrics
 
-A metric is a measurement of a service captured at runtime. The moment of capturing a measurements is known as a metric event, 
+A metric is a measurement of a service captured at runtime. The moment of capturing a measurements is known as a metric event,
 which consists not only of the measurement itself, but also the time at which it was captured and associated metadata.
-Application and request metrics are important indicators of availability and performance. 
-Custom metrics can provide insights into how availability indicators impact user experience or the business. 
+Application and request metrics are important indicators of availability and performance.
+Custom metrics can provide insights into how availability indicators impact user experience or the business.
 Collected data can be used to alert of an outage or trigger scheduling decisions to scale up a deployment automatically upon high demand.
 
 Read more about  metrics here :  https://opentelemetry.io/docs/concepts/signals/metrics/
 
-Assignment : 
+Assignment :
 Create metrics that counts requests by request and response type
 
 Also make an adRequestsCounter with the span metrics called : `app.ads.count`, `app.ads.ad_request_type`, `app.ads.ad_response_type`
@@ -98,16 +98,17 @@ Also make an adRequestsCounter with the span metrics called : `app.ads.count`, `
 
 ### Assignment.5 - Add session_id as Baggage
 
-Baggage in OpenTelemetry is a mechanism for propagating context across process boundaries in distributed systems. It allows you to attach arbitrary key-value pairs to a request 
-and have them travel along with that request as it moves through different services or components. Unlike spans, which are primarily used for tracing and measuring the execution of operations, 
+Baggage in OpenTelemetry is a mechanism for propagating context across process boundaries in distributed systems. It allows you to attach arbitrary key-value pairs to a request
+and have them travel along with that request as it moves through different services or components. Unlike spans, which are primarily used for tracing and measuring the execution of operations,
 baggage is intended to carry additional contextual information that might be relevant for various parts of your system.
 
 __Assignment  :__
-You will be modifying a service to extract a session.id from the current context's baggage. If the session.id is present, 
+You will be modifying a service to extract a session.id from the current context's baggage. If the session.id is present,
 it should be used to enrich the current span and to update a custom context object (evaluationContext).
 If no baggage is found, you will handle this case by logging an appropriate message.
 
 ### Assignment.6 - Add logs
+
 OpenTelemetry does not define a bespoke API or SDK to create logs. Instead, OpenTelemetry logs are the existing logs you already have from a logging framework or infrastructure component. OpenTelemetry SDKs and autoinstrumentation utilize several components to automatically correlate logs with traces.
 
 OpenTelemetry’s support for logs is designed to be fully compatible with what you already have, providing capabilities to wrap those logs with additional context and a common toolkit to parse and manipulate logs into a common format across many different sources.
@@ -116,16 +117,31 @@ In our instance we are using Log4j that automaticly sends logs to the OpenTeleme
 
 Read more here :  https://opentelemetry.io/docs/concepts/signals/logs/
 
+## Skipping the assignment
 
+If you are having trouble with the assignment, you can skip it and continue with the next one by changing the `docker-compose.yaml` to use the pre-built image for the `adservice` like this and commenting out the build section:
 
+```yaml
+  adservice:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-adservice
+    container_name: ad-service
+    #build:
+    #  context: ./
+    #  dockerfile: ${AD_SERVICE_DOCKERFILE}
+    #  cache_from:
+    #    - ${IMAGE_NAME}:${IMAGE_VERSION}-adservice
+```
 
+And setting the environments variables like this:
 
-
-
-
-
-
-
-
-
-
+```yaml
+    environment:
+      - AD_SERVICE_PORT
+      - FLAGD_HOST
+      - FLAGD_PORT
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_LOGS_EXPORTER=otlp
+      - OTEL_SERVICE_NAME=adservice
+```
