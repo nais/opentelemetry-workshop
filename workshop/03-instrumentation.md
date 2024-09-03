@@ -7,6 +7,10 @@ In this section, we will instrument a simple Java application with OpenTelemetry
 
 In this assignment we are going to instrument ad service with the OpenTelemetry Java agent. You can read about the documentation [here](https://github.com/open-telemetry/opentelemetry-java-instrumentation/)
 
+!!! note
+
+    If you are stuck you can check the solution in the `ad-service-solution` branch on GitHub.
+
 ### Assignment 1 - Enable OpenTelemetry Java agent in the Adservice
 First assignment is to enable Opentelemetry java agent for the adservice. You can read about how it's done here  : https://opentelemetry.io/docs/zero-code/java/agent/getting-started/
 
