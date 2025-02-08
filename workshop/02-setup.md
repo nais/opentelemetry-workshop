@@ -64,18 +64,11 @@ If you get problems related to volumes, you can try do the following to relace t
 
 ```yaml
   otel-lgtm:
+    #image: grafana/otel-lgtm:latest
     build:
       context: ./src/otel-lgtm
       dockerfile: Dockerfile
-    container_name: otel-lgtm
-    restart: unless-stopped
-    ports:
-      - "${GRAFANA_SERVICE_PORT}"
-    environment:
-      - GF_SERVER_DOMAIN=localhost
-      - GF_SERVER_ROOT_URL=%(protocol)s://%(domain)s/grafana/
-      - GF_SERVER_SERVE_FROM_SUB_PATH=true
-    logging: *logging
+    ...
 ```
 
 And comment out the grafana volume:
@@ -112,7 +105,8 @@ otel-lgtm  |  - 3000: Grafana. User: admin, password: admin
 
 Open your browser and navigate to the following URLs:
 
-* http://localhost:8080
+* <http://localhost:8080> (application)
+* <http://localhost:8080/grafana> (Grafana)
 
 ## Next steps
 

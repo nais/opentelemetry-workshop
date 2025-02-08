@@ -20,9 +20,9 @@ Tools and technologies used in this workshop:
 
 ## Workshop
 
-2. [Local setup](./02-setup.md)
-3. [Instrumentation with JAVA](./03-instrumentation.md)
-4. [Exploring the data in Grafana](./04-grafana.md)
-5. [Creating our first dashboard](./05-dashboard.md)
-6. [Challenge 1](./06-challenge-1.md)
-7. [Challenge 2](./07-challenge-2.md)
+1. [Local setup](./02-setup.md)
+1. [Instrumentation with JAVA](./03-instrumentation.md)
+1. [Exploring the data in Grafana](./04-grafana.md)
+1. [Creating our first dashboard](./05-dashboard.md)
+1. [Challenge 1](./06-challenge-1.md)
+1. [Challenge 2](./07-challenge-2.md)
