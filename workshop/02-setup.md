@@ -53,10 +53,10 @@ docker-compose stop loadgenerator
 When you are ready to start the load generator again you can run the following command:
 
 ```bash
-docker-compose start loadgenerator
+docker-compose start load-generator
 ```
 
-When the loadgenerator is not running the application with not generate any opentelemetry data and the traces, logs and metrics will be empty.
+When the load-generator is not running the application with not generate any opentelemetry data and the traces, logs and metrics will be empty.
 
 ### Problems starting otel-lgtm?
 
