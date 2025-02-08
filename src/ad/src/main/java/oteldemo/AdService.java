@@ -59,23 +59,10 @@ public final class AdService {
   private HealthStatusManager healthMgr;
 
   private static final AdService service = new AdService();
-  // Assignment.3
-  //private static final Tracer tracer = GlobalOpenTelemetry.getTracer("ad");
+  private static final Tracer tracer = GlobalOpenTelemetry.getTracer("ad");
+  private static final Meter meter = GlobalOpenTelemetry.getMeter("ad");
 
-  // Assignment.4
-  //private static final Meter meter = GlobalOpenTelemetry.getMeter("ad");
-
-  // Assignment.4
-  //private static final LongCounter adRequestsCounter =
-    //  meter
-      //    .counterBuilder("app.ads.ad_requests")
-        //  .setDescription("Counts ad requests by request and response type")
-        //  .build();
-
- // private static final AttributeKey<String> adRequestTypeKey =
-   //   AttributeKey.stringKey("app.ads.ad_request_type");
-  //private static final AttributeKey<String> adResponseTypeKey =
-    //  AttributeKey.stringKey("app.ads.ad_response_type");
+  // @TODO: add metric counter
 
   private void start() throws IOException {
     int port =
@@ -96,7 +83,7 @@ public final class AdService {
     FlagdProvider flagdProvider = new FlagdProvider(options);
     // Set flagd as the OpenFeature Provider
     OpenFeatureAPI.getInstance().setProvider(flagdProvider);
-  
+
     server =
         ServerBuilder.forPort(port)
             .addService(new AdServiceImpl())
@@ -135,12 +122,12 @@ public final class AdService {
   }
 
   private static class AdServiceImpl extends oteldemo.AdServiceGrpc.AdServiceImplBase {
-    
+
     private static final String AD_FAILURE = "adFailure";
     private static final String AD_MANUAL_GC_FEATURE_FLAG = "adManualGc";
     private static final String AD_HIGH_CPU_FEATURE_FLAG = "adHighCpu";
     private static final Client ffClient = OpenFeatureAPI.getInstance().getClient();
-    
+
     private AdServiceImpl() {}
 
     /**
@@ -154,30 +141,18 @@ public final class AdService {
     public void getAds(AdRequest req, StreamObserver<AdResponse> responseObserver) {
       AdService service = AdService.getInstance();
 
-      // Assignment.3
-      // get the current span in context
-      //Span span = Span.current();
+      // @TODO: get the current span in context
       try {
         List<Ad> allAds = new ArrayList<>();
         AdRequestType adRequestType;
         AdResponseType adResponseType;
-        // Assignment.5
-        //Baggage baggage = Baggage.fromContextOrNull(Context.current());
         MutableContext evaluationContext = new MutableContext();
-        //if (baggage != null) {
-          //final String sessionId = baggage.getEntryValue("session.id");
-          //span.setAttribute("session.id", sessionId);
-          //evaluationContext.setTargetingKey(sessionId);
-          //evaluationContext.add("session", sessionId);
-        //} else {
-          //logger.info("no baggage found in context");
-        //}
+        // @TODO: extract session ID from baggage
 
         CPULoad cpuload = CPULoad.getInstance();
         cpuload.execute(ffClient.getBooleanValue(AD_HIGH_CPU_FEATURE_FLAG, false, evaluationContext));
 
-        //span.setAttribute("app.ads.contextKeys", req.getContextKeysList().toString());
-        //span.setAttribute("app.ads.contextKeys.count", req.getContextKeysCount());
+        // @TODO: set the span attributes 1
         if (req.getContextKeysCount() > 0) {
           logger.info("Targeted ad request received for " + req.getContextKeysList());
           for (int i = 0; i < req.getContextKeysCount(); i++) {
@@ -197,15 +172,9 @@ public final class AdService {
           allAds = service.getRandomAds();
           adResponseType = AdResponseType.RANDOM;
         }
-        // Assignment.2
-        //span.setAttribute("app.ads.count", allAds.size());
-        //span.setAttribute("app.ads.ad_request_type", adRequestType.name());
-        //span.setAttribute("app.ads.ad_response_type", adResponseType.name());
+        // @TODO: set the span attributes 2
 
-        //adRequestsCounter.add(
-          //  1,
-            //Attributes.of(
-              //  adRequestTypeKey, adRequestType.name(), adResponseTypeKey, adResponseType.name()));
+        // @TODO: count the number of ad requests
 
         // Throw 1/10 of the time to simulate a failure when the feature flag is enabled
         if (ffClient.getBooleanValue(AD_FAILURE, false, evaluationContext) && random.nextInt(10) == 0) {
@@ -222,9 +191,7 @@ public final class AdService {
         responseObserver.onNext(reply);
         responseObserver.onCompleted();
       } catch (StatusRuntimeException e) {
-        span.addEvent(
-            "Error", Attributes.of(AttributeKey.stringKey("exception.message"), e.getMessage()));
-        span.setStatus(StatusCode.ERROR);
+        // @TODO: add span event
         logger.log(Level.WARN, "GetAds Failed with status {}", e.getStatus());
         responseObserver.onError(e);
       }
@@ -232,38 +199,23 @@ public final class AdService {
   }
 
   private static final ImmutableListMultimap<String, Ad> adsMap = createAdsMap();
-// Assignment.3
-//  @WithSpan("getAdsByCategory")
+  // @TODO: create a new span for getAdsByCategory
   private Collection<Ad> getAdsByCategory(@SpanAttribute("app.ads.category") String category) {
     Collection<Ad> ads = adsMap.get(category);
-    // Assignment.3
-    //Span.current().setAttribute("app.ads.count", ads.size());
     return ads;
   }
 
   private static final Random random = new Random();
 
+  // @TODO: create a new span for getRandomAds
   private List<Ad> getRandomAds() {
 
     List<Ad> ads = new ArrayList<>(MAX_ADS_TO_SERVE);
 
-    // create and start a new span manually
-    // Assignment.4
-    //Span span = tracer.spanBuilder("getRandomAds").startSpan();
-
-    // put the span into context, so if any child span is started the parent will be set properly
-    // Assignment.3
-    //try (Scope ignored = span.makeCurrent()) {
-
-      Collection<Ad> allAds = adsMap.values();
-      for (int i = 0; i < MAX_ADS_TO_SERVE; i++) {
-        ads.add(Iterables.get(allAds, random.nextInt(allAds.size())));
-      }
-//      span.setAttribute("app.ads.count", ads.size());
-
-  //  } finally {
-    //  span.end();
-    //}
+    Collection<Ad> allAds = adsMap.values();
+    for (int i = 0; i < MAX_ADS_TO_SERVE; i++) {
+      ads.add(Iterables.get(allAds, random.nextInt(allAds.size())));
+    }
 
     return ads;
   }
