@@ -24,10 +24,10 @@ Let's jump righ in and start exploring the traces.
 
 ## Working with Traces
 
-!!!
-    Before you continue, we reccomend you watch the following video to get a better understanding of the [Grafana Tempo query language (TraceQL)](https://grafana.com/docs/tempo/latest/traceql/).
-
-    [![Grafana Tempo Query Language](https://i.vimeocdn.com/video/1604745175-f6aff29f85dc88abdc89d20524329e3dee7c0142e4395ff5a7c95946b808fe29-d?mw=1920&mh=1080&q=70)](https://vimeo.com/796408188)
+> [!TIP]
+> Before you continue, we reccomend you watch the following video to get a better understanding of the [Grafana Tempo query language (TraceQL)](https://grafana.com/docs/tempo/latest/traceql/).
+>
+> [![Grafana Tempo Query Language](https://i.vimeocdn.com/video/1604745175-f6aff29f85dc88abdc89d20524329e3dee7c0142e4395ff5a7c95946b808fe29-d?mw=1920&mh=1080&q=70)](https://vimeo.com/796408188)
 
 In the `Explore` section, select the `Tempo` data source and click on the `Service Graph` tab.
 
@@ -43,34 +43,33 @@ When you hover over a node in the service graph, you will see the request rate f
 
 You can click on the nodes in the service graph to see the traces for that service. You can also click on the operations in the latency and error rate section to see the traces for that operation.
 
-!!! info
-
-    :question: How many services are there in the service graph?
-
-    :question: Using the `Service Graph`, what services are the the `checkoutservice` connected to and what are the relationships to them?
-
-    <details>
-    <summary>Hint</summary>
-
-    The `checkoutservice` is connected to following services:
-
-    * `productcatalogservice` (outbound)
-    * `currencyservice` (outbound)
-    * `shippingservice` (outbound)
-    * `emailservice` (outbound)
-    * `kafka` (outbound)
-    * `paymentservice` (outbound)
-    * `cartserice` (outbound)
-    * `frontend` (inbound)
-    </details>
-
-    :question: Can you spot the failing service(s) in the service graph? What is the error rate for the failing service?
-
-    <details>
-    <summary>Hint</summary>
-
-    The `adservice` is failing. The error rate is around `0.01`. Click on the `adservice` node and select the `Failed request rate` menu to see the error rate.
-    </details>
+> [!IMPORTANT]  
+> :question: How many services are there in the service graph?
+> 
+> :question: Using the `Service Graph`, what services are the the `checkoutservice` connected to and what are the relationships to them?
+> 
+> <details>
+> <summary>Hint</summary>
+> 
+> The `checkoutservice` is connected to following services:
+> 
+> * `productcatalogservice` (outbound)
+> * `currencyservice` (outbound)
+> * `shippingservice` (outbound)
+> * `emailservice` (outbound)
+> * `kafka` (outbound)
+> * `paymentservice` (outbound)
+> * `cartserice` (outbound)
+> * `frontend` (inbound)
+> </details>
+> 
+> :question: Can you spot the failing service(s) in the service graph? What is the error rate for the failing service?
+> 
+> <details>
+> <summary>Hint</summary>
+> 
+> The `adservice` is failing. The error rate is around `0.01`. Click on the `adservice` node and select the `Failed request rate` menu to see the error rate.
+> </details>
 
 Let's see some more details about our traces. Click on the `frontend` node in the service graph to see the traces for the service by clicking on the `View traces` menu.
 
