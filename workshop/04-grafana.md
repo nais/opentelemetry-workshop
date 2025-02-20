@@ -268,6 +268,13 @@ Lets try to add some filters to our log search query to refine the results and f
 > ```logql
 > {service_name="frontend-proxy"} |= `` | http_request_method = `POST`
 > ```
+>
+> :question: Now, can you find out what the following LogQL query does? `{service_namespace="opentelemetry-demo"} | productId = `9SIQT8TOJO` | quantity > 3 | logfmt`
+>
+> <details>
+> <summary>Hint</summary>
+> This query filters the logs where the `service_namespace` label is `opentelemetry-demo`, the `productId` label is `9SIQT8TOJO`, and the `quantity` label is greater than `3`. The `logfmt` function is used to format the logs in a human-readable format.
+> </details>
 
 As you can see, you can apply multiple filters to the query editor to refine the results and find the logs that you are interested in.
 
@@ -279,7 +286,63 @@ Click around and explore the logs to get a better understanding of the logs and 
 
 ## Exploring Metrics
 
-(Coming soon)
+## Working with Metrics
+
+> [!TIP]
+> Before you continue, we recommend you watch the following video to get a better understanding of [PromQL](https://prometheus.io/docs/prometheus/latest/querying/basics/).
+>
+> [![Querying Metrics with PromQL](https://i.vimeocdn.com/video/1715142171-10d5b8c00d331088bac2b0217319230d06328cdfe53d9a36a701b32c8e0b7d82-d_2400)](https://vimeo.com/857879980)
+
+Grafana uses Prometheus as the data source for metrics. In the `Explore` section, select the `Prometheus` data source.
+
+![Grafana Prometheus](./assets/04-grafana-metrics-search.png)
+
+The Prometheus explorer has three sections labeled `A`, and `B`.
+
+- Section `A` is the metrics query editor. You can write a query using PromQL to filter and aggregate metrics.
+- Section `B` is the graph visualization. It shows the selected metrics over time.
+
+You can use the PromQL query language to filter the metrics based on labels and other attributes. Here is an example of a query that finds the rate of HTTP requests for the `cart` service:
+
+```promql
+rate(http_server_requests_seconds_count{service_name="cart"}[5m])
+```
+
+Let's try adding some filters to our metrics search query to refine the results and visualize the metrics that we are interested in.
+
+> [!IMPORTANT]
+>
+> :question: Find the CPU usage for the `checkoutservice`. What is the PromQL query for this metric?
+>
+> <details>
+> <summary>Hint</summary>
+> Use the following query in the query editor:
+>
+> ```promql
+> rate(container_cpu_usage_nanoseconds_total{cntainer_name="checkout"}[5m])
+> ```
+> </details>
+>
+> :question: Find the memory usage for the `productcatalogservice`. What is the PromQL query for this metric?
+>
+> <details>
+> <summary>Hint</summary>
+> Use the following query in the query editor:
+>
+> ```promql
+> container_memory_file_bytes{service_name="productcatalogservice"}
+> ```
+> </details>
+
+As you can see, you can apply multiple filters to the query editor to refine the results and find the metrics that you are interested in. You can also use the `Graph` and `Table` tabs to visualize the metrics in different ways.
+
+You can also use functions like `sum`, `avg`, `min`, `max` to aggregate the metrics. For example, you can use the following query to find the average CPU usage for all services:
+
+```promql
+avg(rate(process_cpu_seconds_total[5m]))
+```
+
+Click around and explore the metrics to get a better understanding of the metrics and the labels associated with the metrics for the different services.
 
 ## Conclusion
 
