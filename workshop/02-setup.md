@@ -47,7 +47,7 @@ You should see a lot of output in the terminal. The services are starting up and
 If you for some reason want to reduce the load you can run the following command to stop the load generator:
 
 ```bash
-docker-compose stop loadgenerator
+docker-compose stop load-generator
 ```
 
 When you are ready to start the load generator again you can run the following command:
