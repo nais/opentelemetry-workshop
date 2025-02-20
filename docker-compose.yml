@@ -698,6 +698,8 @@ services:
     restart: unless-stopped
     ports:
       - "${GRAFANA_PORT}"
+      - "${OTEL_COLLECTOR_PORT_GRPC}"
+      - "${OTEL_COLLECTOR_PORT_HTTP}"
     environment:
       - GF_SERVER_DOMAIN=localhost
       - GF_SERVER_ROOT_URL=%(protocol)s://%(domain)s/grafana/
