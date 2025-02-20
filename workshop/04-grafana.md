@@ -237,6 +237,46 @@ The `Logs` explorer has three sections labeled `A`, `B`, and `C`.
 - Section `B` is the log volume graph. It shows the log volume over time.
 - Section `C` is the log stream. It shows all the logs that match the query in a table format. Click on a log to see the details of the log.
 
+You can use the `LogQL` query language to filter the logs based on the log labels and other attributes. Here is an example of a query that finds the logs where the `service_name` label is `frontend-proxy`:
+
+```logql
+{service_name="frontend-proxy"}
+```
+
+Lets try to add some filters to our log search query to refine the results and find the logs that we are interested in.
+
+> [!IMPORTANT]
+>
+> :question: Find the logs where the `service_name` label is `frontend-proxy` and the `http_method` label is `POST`. What is the LogQL query for this filter?
+>
+> <details>
+> <summary>Hint</summary>
+> Apply the following filter in the query editor:
+>
+> * `service_name`
+> * `=`
+> * `frontend-proxy`
+>
+> Click the `+ Operations` button and choose `Label filter expression`:
+>
+> * Label: `http_request_method`
+> * Operator: `=`
+> * Value: `POST`
+>
+> The LogQL query for this filter is:
+>
+> ```logql
+> {service_name="frontend-proxy"} |= `` | http_request_method = `POST`
+> ```
+
+As you can see, you can apply multiple filters to the query editor to refine the results and find the logs that you are interested in.
+
+![Grafana Log Details](./assets/04-grafana-log-details.png)
+
+Try clicking on a log in the log stream to see the details of the log and all the fields associated with the log. You can also click on the `View trace` button to see the trace associated with the log.
+
+Click around and explore the logs to get a better understanding of the logs and the fields associated with the logs for the different services.
+
 ## Exploring Metrics
 
 (Coming soon)
