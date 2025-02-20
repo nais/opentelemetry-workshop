@@ -77,7 +77,7 @@ To refine trace analysis, add custom attributes and events to spans in the `ad` 
 1. Get the current span (look for `// @TODO: get the current span in context`):
 
 ```java
-Span currentSpan = Span.current();
+Span span = Span.current();
 ```
 
 - Captures the active span
