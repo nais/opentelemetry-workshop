@@ -43,16 +43,16 @@ When you hover over a node in the service graph, you will see the request rate f
 
 You can click on the nodes in the service graph to see the traces for that service. You can also click on the operations in the latency and error rate section to see the traces for that operation.
 
-> [!IMPORTANT]  
+> [!IMPORTANT]
 > :question: How many services are there in the service graph?
-> 
+>
 > :question: Using the `Service Graph`, what services are the the `checkoutservice` connected to and what are the relationships to them?
-> 
+>
 > <details>
 > <summary>Hint</summary>
-> 
+>
 > The `checkoutservice` is connected to following services:
-> 
+>
 > * `productcatalogservice` (outbound)
 > * `currencyservice` (outbound)
 > * `shippingservice` (outbound)
@@ -62,12 +62,12 @@ You can click on the nodes in the service graph to see the traces for that servi
 > * `cartserice` (outbound)
 > * `frontend` (inbound)
 > </details>
-> 
+>
 > :question: Can you spot the failing service(s) in the service graph? What is the error rate for the failing service?
-> 
+>
 > <details>
 > <summary>Hint</summary>
-> 
+>
 > The `adservice` is failing. The error rate is around `0.01`. Click on the `adservice` node and select the `Failed request rate` menu to see the error rate.
 > </details>
 
@@ -88,56 +88,52 @@ The table in section `E` shows the following columns:
 - `Name`: The initiating span name for the trace.
 - `Duration`: The duration of the trace.
 
-!!! info
-
-    :question: Sort the list of traces by the `Duration` column. What is the longest duration of a trace? And what is the shortest duration of a trace?
-
 Let's add some filters to our trace search query to refine the results and find the traces that we are interested in. This is the true power of tracing, the ability to filter and search for traces based on the attributes of the spans.
 
-!!! info
+> [!IMPORTANT]
+>
+> :question: Find the traces for the `frontend` service where the `http.method` is `POST`. What is the TraceQL query for this filter?
+>
+> <details>
+> <summary>Hint</summary>
+> Apply the following filter in the query editor:
+>
+> * `span`
+> * `http.method`
+> * `=`
+> * `POST`
+>
+> The TraceQL query for this filter is:
 
-    :question: Find the traces for the `frontend` service where the `http.method` is `POST`. What is the TraceQL query for this filter?
-
-    <details>
-    <summary>Hint</summary>
-    Apply the following filter in the query editor:
-
-    * `span`
-    * `http.method`
-    * `=`
-    * `POST`
-
-    The TraceQL query for this filter is:
-
-    ```promql
-    {span.http.method="POST" && resource.service.name="fronted"}
-    ```
-    </details>
-
-    :question: Find the traces for the `frontend` service where the `http.method` is `GET` and `http.status_code` is `500`. What is the TraceQL query for this filter?
-
-    <details>
-    <summary>Hint</summary>
-    Apply the following filter in the query editor:
-
-    * `span`
-    * `http.method`
-    * `=`
-    * `GET`
-
-    Click the `+` button to add another filter:
-
-    * `span`
-    * `http.status_code`
-    * `=`
-    * `500`
-
-    The TraceQL query for this filter is:
-
-    ```promql
-    {span.http.method="GET" && span.http.status_code="500" && resource.service.name="fronted"}
-    ```
-    </details>
+> ```promql
+> {span.http.method="POST" && resource.service.name="fronted"}
+> ```
+> </details>
+>
+> :question: Find the traces for the `frontend` service where the `http.method` is `GET` and `http.status_code` is `500`. What is the TraceQL query for this filter?
+>
+> <details>
+> <summary>Hint</summary>
+> Apply the following filter in the query editor:
+>
+> * `span`
+> * `http.method`
+> * `=`
+> * `GET`
+>
+> Click the `+` button to add another filter:
+>
+> * `span`
+> * `http.status_code`
+> * `=`
+> * `500`
+>
+> The TraceQL query for this filter is:
+>
+> ```promql
+> {span.http.method="GET" && span.http.status_code="500" && resource.service.name="fronted"}
+> ```
+> </details>
 
 As you can see, you can apply multiple filters to the query editor to refine the results and find the traces that you are interested in.
 
@@ -160,31 +156,31 @@ But in most cases, you will need to use the ancestor-descendant relationship ope
 {span.service.name="frontend"} >> {span.service.name="emailservice"}
 ```
 
-!!! info
-
-    :question: Find any traces where the `frontend` service calls the `checkoutservice` service. What is the TraceQL query for this filter?
-
-    <details>
-    <summary>Hint</summary>
-
-    The TraceQL query for this filter is:
-
-    ```promql
-    {span.service.name="frontend"} > {span.service.name="checkoutservice"}
-    ```
-    </details>
-
-    :question: Find the traces where the `frontend` service calls the `checkoutservice` service and the `checkoutservice` service calls the `email` service. What is the TraceQL query for this filter?
-
-    <details>
-    <summary>Hint</summary>
-
-    The TraceQL query for this filter is:
-
-    ```promql
-    {span.service.name="frontend"} >> {span.service.name="checkoutservice"} >> {span.service.name="emailservice"}
-    ```
-    </details>
+> [!IMPORTANT]
+>
+> :question: Find any traces where the `frontend` service calls the `checkoutservice` service. What is the TraceQL query for this filter?
+>
+> <details>
+> <summary>Hint</summary>
+>
+> The TraceQL query for this filter is:
+>
+> ```promql
+> {span.service.name="frontend"} > {span.service.name="checkoutservice"}
+> ```
+> </details>
+>
+> :question: Find the traces where the `frontend` service calls the `checkoutservice` service and the `checkoutservice` service calls the `email` service. What is the TraceQL query for this filter?
+>
+> <details>
+> <summary>Hint</summary>
+>
+> The TraceQL query for this filter is:
+>
+> ```promql
+> {span.service.name="frontend"} >> {span.service.name="checkoutservice"} >> {span.service.name="emailservice"}
+> ```
+> </details>
 
 ![Grafana Trace Details](./assets/04-grafana-trace-details.png)
 
@@ -199,37 +195,37 @@ The trace view is a tree structure where the root span is at the top and the chi
 
 Different colors are used to represent different services in the trace view and the indentation is used to represent the parent-child relationship between spans.
 
-!!! info
-
-    :question: What is the duration of the trace that you selected? How many spans are there in the trace?
-
-    :question: What is the relationship between the spans in the trace view?
-
-    :question: What is the service name of the root span in the trace view?
-
-    :question: Find all the spans in the trace view where the `http.method` is `GET`. What is the duration of the span with the `http.method` `GET` or `POST`?
-
-    <details>
-    <summary>Hint</summary>
-
-    Apply the following filter in the span filter (section `H`):
-
-    * `Tags`
-    * `http.method`
-    * `=`
-    * `GET` or `POST`
-
-    The duration of the span with the `http.method` `GET` or `POST` is the sum of the durations of the spans that match the filter.
-    </details>
+> [!IMPORTANT]
+>
+> :question: What is the duration of the trace that you selected? How many spans are there in the trace?
+>
+> :question: What is the relationship between the spans in the trace view?
+>
+> :question: What is the service name of the root span in the trace view?
+>
+> :question: Find all the spans in the trace view where the `http.method` is `GET`. What is the duration of the span with the `http.method` `GET` or `POST`?
+>
+> <details>
+> <summary>Hint</summary>
+>
+> Apply the following filter in the span filter (section `H`):
+>
+> * `Tags`
+> * `http.method`
+> * `=`
+> * `GET` or `POST`
+>
+> The duration of the span with the `http.method` `GET` or `POST` is the sum of the durations of the spans that match the filter.
+> </details>
 
 Have you noticed the little `LOG` icon next to the span name in the trace view? This icon indicates that there are logs associated with the span. You can click on the span to see the logs in the `Logs` view. If there are no logs associated with that particluar span, you will see a message that says `No logs found`, try clicking on another span to see the logs.
 
 ## Working with Logs
 
-!!!
-    Before you continue, we reccomend you watch the following video to get a better understanding of the [Grafana Loki query language (LogQL)](https://grafana.com/docs/loki/latest/query/).
-
-    [![Grafana Tempo Query Language](https://i.ytimg.com/vi/zIdEVNA6YTI/hqdefault.jpg)](https://www.youtube.com/watch?v=zIdEVNA6YTI)
+> [!TIP]
+> Before you continue, we reccomend you watch the following video to get a better understanding of the [Grafana Loki query language (LogQL)](https://grafana.com/docs/loki/latest/query/).
+>
+> [![Grafana Tempo Query Language](https://i.ytimg.com/vi/zIdEVNA6YTI/hqdefault.jpg)](https://www.youtube.com/watch?v=zIdEVNA6YTI)
 
 Grafana Loki is the log aggregation system that we are using to store and query logs in Grafana. In the `Explore` section, select the `Loki` data source and click on the `Logs` tab.
 
