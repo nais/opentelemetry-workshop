@@ -104,7 +104,7 @@ Let's add some filters to our trace search query to refine the results and find 
 > * `POST`
 >
 > The TraceQL query for this filter is:
-
+>
 > ```promql
 > {span.http.method="POST" && resource.service.name="fronted"}
 > ```

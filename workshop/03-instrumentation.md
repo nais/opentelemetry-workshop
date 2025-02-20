@@ -34,9 +34,32 @@ ADD --chmod=644 https://github.com/open-telemetry/opentelemetry-java-instrumenta
 ENV JAVA_TOOL_OPTIONS=-javaagent:/usr/src/app/opentelemetry-javaagent.jar
 ...
 ```
+
 - Downloads the agent from GitHub
 - Places it under `/usr/src/app/`
 - Uses `JAVA_TOOL_OPTIONS` to start the JVM with the agent
+
+> [!IMPORTANT]
+> :question: What is the purpose of the OpenTelemetry Java agent?
+>
+> <details>
+> <summary>Hint</summary>
+> The OpenTelemetry Java agent automatically instruments Java applications to collect traces, metrics, and logs.
+> </details>
+>
+> :question: What is the role of the OpenTelemetry collector?
+>
+> <details>
+> <summary>Hint</summary>
+> The OpenTelemetry collector receives telemetry data from agents and forwards it to backends like Jaeger, Prometheus, and Grafana.
+> </details>
+>
+> :question: How does the OpenTelemetry agent differ from manual instrumentation?
+>
+> <details>
+> <summary>Hint</summary>
+> The OpenTelemetry agent automatically instruments applications, while manual instrumentation requires developers to add code for tracing, metrics, and logs.
+> </details>
 
 Rebuild the `ad` service:
 
@@ -56,6 +79,7 @@ To refine trace analysis, add custom attributes and events to spans in the `ad` 
 ```java
 Span currentSpan = Span.current();
 ```
+
 - Captures the active span
 - Lets you modify span data
 - Reflects the ongoing trace context
@@ -70,6 +94,7 @@ span.setAttribute("app.ads.count", allAds.size());
 span.setAttribute("app.ads.ad_request_type", adRequestType.name());
 span.setAttribute("app.ads.ad_response_type", adResponseType.name());
 ```
+
 - Adds contextual data to the current span
 - Associates details about the request and response
 - Helps with trace-based troubleshooting
@@ -81,6 +106,7 @@ span.addEvent(
   "Error", Attributes.of(AttributeKey.stringKey("exception.message"), e.getMessage()));
 span.setStatus(StatusCode.ERROR);
 ```
+
 - Logs an error event in the span
 - Stores exception details
 - Marks the span as failed
@@ -91,6 +117,29 @@ Rebuild the `ad` service:
 docker-compose down ad
 docker-compose up ad --build -d
 ```
+
+> [!IMPORTANT]
+>
+> :question: What is the purpose of adding attributes to spans?
+>
+> <details>
+> <summary>Hint</summary>
+> Attributes provide context to spans, making it easier to understand the trace data.
+> </details>
+>
+> :question: Why is it important to add events to spans?
+>
+> <details>
+> <summary>Hint</summary>
+> Events help track significant occurrences during a span's lifecycle, such as errors or warnings.
+> </details>
+>
+> :question: How do attributes and events improve trace analysis?
+>
+> <details>
+> <summary>Hint</summary>
+> Attributes and events provide additional context to traces, making it easier to troubleshoot issues and understand the flow of operations.
+> </details>
 
 ---
 
@@ -108,6 +157,7 @@ private Collection<Ad> getAdsByCategory(@SpanAttribute("app.ads.category") Strin
   return ads;
 }
 ```
+
 - Creates a named span for category-based lookups
 - Adds an attribute for ads count
 - Encapsulates category handling in a separate span
@@ -132,9 +182,33 @@ private List<Ad> getRandomAds() {
   return ads;
 }
 ```
+
 - Manually starts a new span for random ad selection
 - Tracks random picks inside the span
 - Ends the span after finishing the operation
+
+> [!IMPORTANT]
+>
+> :question: What is the purpose of creating new spans?
+>
+> <details>
+> <summary>Hint</summary>
+> Spans help segment operations within a trace, making it easier to understand the flow of requests and responses.
+> </details>
+>
+> :question: Why is it important to name spans?
+>
+> <details>
+> <summary>Hint</summary>
+> Named spans provide context to trace data, helping developers understand the purpose of each operation.
+> </details>
+>
+> :question: How do new spans improve trace analysis?
+>
+> <details>
+> <summary>Hint</summary>
+> New spans help break down complex operations into smaller, more manageable units, making it easier to troubleshoot and optimize performance.
+> </details>
 
 Rebuild `ad`:
 
@@ -161,6 +235,7 @@ private static final AttributeKey<String> adRequestTypeKey =
 private static final AttributeKey<String> adResponseTypeKey =
   AttributeKey.stringKey("app.ads.ad_response_type");
 ```
+
 - Defines a counter for ad requests
 - Creates attribute keys for request and response types
 - Helps monitor the overall request flow
@@ -173,9 +248,33 @@ adRequestsCounter.add(
   Attributes.of(
     adRequestTypeKey, adRequestType.name(), adResponseTypeKey, adResponseType.name()));
 ```
+
 - Increments the counter each time an ad is requested
 - Tags each metric with request and response types
 - Enables deeper analysis of request patterns
+
+> [!IMPORTANT]
+>
+> :question: What is the purpose of adding custom metrics?
+>
+> <details>
+> <summary>Hint</summary>
+> Metrics provide insights into service performance, helping developers understand how the service behaves in production.
+> </details>
+>
+> :question: Why is it important to tag metrics with attributes?
+>
+> <details>
+> <summary>Hint</summary>
+> Tagging metrics with attributes provides context to the data, making it easier to analyze and troubleshoot performance issues.
+> </details>
+>
+> :question: How do custom metrics improve service monitoring?
+>
+> <details>
+> <summary>Hint</summary>
+> Custom metrics help track specific service behaviors, such as request patterns and response types, enabling developers to optimize performance and identify bottlenecks.
+> </details>
 
 Rebuild `ad`:
 
@@ -201,9 +300,33 @@ if (baggage != null) {
   logger.info("no baggage found in context");
 }
 ```
+
 - Retrieves session ID from baggage
 - Sets the `session.id` as a span attribute
 - Simplifies passing user session details downstream
+
+> [!IMPORTANT]
+>
+> :question: What is the purpose of extracting baggage?
+>
+> <details>
+> <summary>Hint</summary>
+> Baggage helps pass context across services, making it easier to track user sessions and troubleshoot issues.
+> </details>
+>
+> :question: Why is it important to add baggage to spans?
+>
+> <details>
+> <summary>Hint</summary>
+> Baggage provides additional context to traces, helping developers understand the flow of operations and user interactions.
+> </details>
+>
+> :question: How does baggage improve trace analysis?
+>
+> <details>
+> <summary>Hint</summary>
+> Baggage helps correlate user sessions across services, making it easier to troubleshoot issues and optimize performance.
+> </details>
 
 Rebuild `ad`:
 
