@@ -147,13 +147,13 @@ To query the relationships between spans, we need to use the `TraceQL` query typ
 Here is an example of a query that finds the traces where the `frontend` service calls the `checkoutservice` service directly:
 
 ```promql
-{span.service.name="frontend"} > {span.service.name="checkoutservice"}
+{resource.service.name="frontend"} > {resource.service.name="checkoutservice"}
 ```
 
 But in most cases, you will need to use the ancestor-descendant relationship operator `>>` to query relationships between spans since there can be multiple spans between the parent and child spans. Here is an example of a query that finds the traces where the `frontend` service calls the `checkoutservice` service:
 
 ```promql
-{span.service.name="frontend"} >> {span.service.name="emailservice"}
+{resource.service.name="frontend"} >> {resource.service.name="emailservice"}
 ```
 
 > [!IMPORTANT]
@@ -166,7 +166,7 @@ But in most cases, you will need to use the ancestor-descendant relationship ope
 > The TraceQL query for this filter is:
 >
 > ```promql
-> {span.service.name="frontend"} > {span.service.name="checkoutservice"}
+> {resource.service.name="frontend"} > {resource.service.name="checkoutservice"}
 > ```
 > </details>
 >
@@ -178,7 +178,7 @@ But in most cases, you will need to use the ancestor-descendant relationship ope
 > The TraceQL query for this filter is:
 >
 > ```promql
-> {span.service.name="frontend"} >> {span.service.name="checkoutservice"} >> {span.service.name="emailservice"}
+> {resource.service.name="frontend"} >> {resource.service.name="checkoutservice"} >> {resource.service.name="emailservice"}
 > ```
 > </details>
 
